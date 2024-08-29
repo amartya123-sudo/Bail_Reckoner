@@ -1,0 +1,36 @@
+import streamlit as st
+from llama_index.core import StorageContext, load_index_from_storage
+
+st.set_page_config(page_title="Bail Reckoner", layout="wide")
+
+st.title("Bail Reckoner")
+
+# List of acts
+acts = [
+    "THE BHARATIYA NYAYA SANHITA, 2023",
+    "THE BHARATIYA NAGARIK SURAKSHA SANHITA, 2023",
+    "THE CODE OF CRIMINAL PROCEDURE, 1973",
+    "THE PROTECTION OF WOMEN FROM DOMESTIC VIOLENCE ACT, 2005",
+    "THE INDIAN PENAL CODE",
+    "THE INDECENT REPRESENTATION OF WOMEN (PROHIBITION) ACT, 1986",
+    "THE IMMORAL TRAFFIC (PREVENTION) ACT, 1956",
+    "THE INFORMATION TECHNOLOGY ACT, 2000",
+    "THE JUVENILE JUSTICE (CARE AND PROTECTION OF CHILDREN) ACT, 2015",
+    "THE NATIONAL INVESTIGATION AGENCY ACT, 2008",
+    "THE NATIONAL SECURITY ACT, 1980",
+    "THE PREVENTION OF CORRUPTION ACT, 1988",
+    "THE PREVENTION OF MONEY-LAUNDERING ACT, 2002",
+    "THE PROTECTION OF CHILDREN FROM SEXUAL OFFENCES ACT, 2012",
+    "THE SCHEDULED CASTES AND THE SCHEDULED TRIBES (PREVENTION OF ATROCITIES) ACT, 1989",
+    "TERRORIST AND DISRUPTIVE ACTIVITIES (PREVENTION) ACT, 1987",
+    "THE UNLAWFUL ACTIVITIES (PREVENTION) ACT, 1967"
+]
+
+
+# Dropdown for selecting the act
+selected_act = st.selectbox("Select an Act", acts)
+
+# Text input for sections
+sections_input = st.text_input("Enter Sections (comma-separated)", placeholder="Enter Section of Offence")
+
+
