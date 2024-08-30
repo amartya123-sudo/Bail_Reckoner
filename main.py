@@ -45,7 +45,6 @@ class Reckoner:
             collection = client['Indian_Acts'][collection_name]
             if sections: 
                 query = {'Section_Number': {'$in': sections}}
-            
             result = collection.find(query)
             response = [res for res in result]
         
@@ -54,18 +53,4 @@ class Reckoner:
     def evaluator(self, input: dict):
         model = self.llm(instruction=Prompt.evaluator)
         return model.generate_content(Prompt.evalPrompt(input)).text
-
-    # def main(self):
-    #     # section = self.fetch("PMLA", "11")
-    #     return self.llm_parser()
-
-
-# reckoner = Reckoner()
-# print(reckoner.main())
-
-
-"""
-304A - Bailable Section,
-Where 304A & 326
-"""
 

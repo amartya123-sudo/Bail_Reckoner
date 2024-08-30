@@ -25,7 +25,8 @@ acts = {
 }
 
 selected = st.selectbox("Select an Act", list(acts.keys()))
-selected_act = acts[selected]
+selected_act = str(acts[selected])
+
 
 sections_input = st.text_input("Enter Sections (comma-separated)", placeholder="Enter Section of Offence")
 
@@ -65,6 +66,7 @@ if st.button("Generate Recommendation"):
         "dependent_members": dependent_members,
         "pregnant": pregnant,
     }
-    result = reckoner.evaluator(inputs)
-    st.text_area("Bail Assessment Recommendation", result, height=300)
+    with st.spinner("Processing"):
+        result = reckoner.evaluator(inputs)
+        st.markdown(result)
 
