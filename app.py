@@ -1,5 +1,5 @@
 import streamlit as st
-from main import Reckoner
+from .main import Reckoner
 
 st.set_page_config(page_title="Bail Reckoner", layout="wide",page_icon="Law_compliant.png")
 st.title("⚖️ Bail Reckoner")
