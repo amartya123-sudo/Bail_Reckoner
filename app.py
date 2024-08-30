@@ -1,17 +1,8 @@
 import streamlit as st
-from .main import Reckoner
+from main import Reckoner
 
 st.set_page_config(page_title="Bail Reckoner", layout="wide",page_icon="Law_compliant.png")
 st.title("⚖️ Bail Reckoner")
-# st.markdown(
-#     """
-#     <h1 style="display:flex; align-items:center;">
-#         <img src="Law_compliant.png" width="30" style="margin-right: 10px;">
-#         Bail Reckoner
-#     </h1>
-#     """,
-#     unsafe_allow_html=True
-# )
 
 acts = {
     "Select an Act": None,
