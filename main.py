@@ -21,14 +21,17 @@ class Reckoner:
     
 
     def fetch(self, collection_name: str, section_number: str):
+        print(collection_name)
         sections = [sec.strip() for sec in section_number.split(",")]
         db = client['Indian_Acts']
-        collection = db[collection_name]
-        
-        query = {'Section_Number': {'$in': sections}}
-        results = collection.find(query)
+        section_desc = []
+        for col in collection_name:
+            collection = db[col]
+            
+            query = {'Section_Number': {'$in': sections}}
+            results = collection.find(query)
 
-        section_desc = [res['Description'] for res in results]
+            section_desc.append(res['Description'] for res in results)
         
         return section_desc
 
