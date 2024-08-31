@@ -2,3 +2,5 @@ google-generativeai
 pymongo
 streamlit
 regex
+uvicorn
+fastapi

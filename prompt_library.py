@@ -14,7 +14,7 @@ class Prompt:
         Provide recommendations that clearly outline eligibility for bail, potential bail conditions, or reasons for ineligibility, ensuring a comprehensive and fair analysis.\n
     """
 
-    def ParsePrompt(text:str):
+    def ParsePrompt(text: str):
         return f"""
             Extract all acts and their respective sections from the following text.\n
             Format the output as a dictionary where each act is a key, and its sections are listed as an array of strings.\n
@@ -24,48 +24,65 @@ class Prompt:
             Here's the text:\n
             {text}
         """
-    
+
     def evalPrompt(kwargs):
-        print(kwargs)
-        return f""" 
-            Assess the eligibility for bail using the following structured approach. Consider the inputs provided for each step and generate a recommendation based on the criteria.
+        return f"""
+            "Assess the eligibility for bail based on the following user-provided inputs. Follow the reasoning process outlined below to determine whether bail should be granted or denied, and under what conditions.
 
-            User Identification:
-            - Age: {kwargs.get('age')}
-            - Gender: {kwargs.get('gender')}
-            - Purpose: Personalize the assessment and determine any special conditions (e.g., minors).
+            Inputs Provided:
 
-            Acts & Sections Imposed:
-            - Imposed Sections: {kwargs.get('offences')}
-            - Purpose: Determine whether the offense is bailable by law.
+            Personal Information:
 
+            Age: {kwargs.get('age')}
+            Gender: {kwargs.get('gender')}
+            Case Details:
+
+            Incident Brief: {kwargs.get('incident_brief')}
+            Offence Acts: {kwargs.get('acts')}
+            Sections under which the offender was arrested: {kwargs.get('offence_section')}
+            Previous Bail Application History:
+
+            Any previous bail application?: {kwargs.get('previous_bail_application')}
+            If Allowed:
+            Terms & Conditions: {kwargs.get('terms_conditions')}
+            If Not:
+            Grounds for Rejection: {kwargs.get('grounds_rejection')}
+            Court where the application was decided: {kwargs.get('court_name')}
             Criminal History:
-            - Previous Convictions: {kwargs.get('convictions')}
-            - Nature of Previous Offenses: {kwargs.get('offences')}
-            - Repeat Offender: {kwargs.get('repeat_offender')}
-            - Purpose: Assess if the accused has a prior record, impacting bail eligibility.
 
-            Threat to Public Safety:
-            - Nature of the Offense: {kwargs.get('public_offences')}
-            - Violent Behavior: {kwargs.get('violent_behaviour')}
-            - Gang Affiliations: {kwargs.get('gang')}
-            - Purpose: Assess whether the accused poses a risk to public safety.
+            Any other previous case?: {kwargs.get('previous_case')}
+            If Yes, sections of offense: {kwargs.get('sections_offense')}
+            Health Information:
 
-            Compliance History:
-            - Previous Compliance with Court Orders: {kwargs.get('previous_order')}
-            - History of Court Attendance: {kwargs.get('court_attendence')}
-            - Purpose: Evaluate the likelihood of the accused complying with bail conditions.
+            Any medical condition?: {kwargs.get('medical_condition')}
+            Decision-Making Process:
 
-            Health and Special Circumstances:
-            - Health Conditions: {kwargs.get('health_condition')}
-            - Dependent Family Members: {kwargs.get('dependent_members')}
-            - Pregnant (if applicable): {kwargs.get('pregnant')}
-            - Purpose: Consider any humanitarian factors influencing bail decisions.
+            Step 1: Evaluate Offense and Arrest Details
 
-            Judicial Discretion:
-            - Final Review: Based on all inputs, generate a recommendation.
-            
-            Decision Point: Determine bail eligibility, suggest potential bail conditions, or outline reasons for ineligibility.        
-        """ 
-    
+            Action: Determine the severity of the offense based on the sections under which the offender was arrested.
+            Reasoning: Consider the nature of the offense (bailable vs. non-bailable) and its seriousness.
+            Step 2: Review Personal Circumstances
 
+            Action: Consider the age and gender of the accused.
+            Reasoning: Account for any special considerations that might apply (e.g., minors, pregnant women).
+            Step 3: Analyze Previous Bail Application
+
+            Action: Check if the accused has applied for bail before.
+            If Allowed:
+            Reasoning: Assess whether the terms and conditions were met.
+            If Not:
+            Reasoning: Understand the grounds for rejection and the court's decision.
+            Step 4: Assess Criminal History
+
+            Action: Review any previous cases involving the accused.
+            Reasoning: Evaluate the nature and sections of past offenses to determine any pattern of behavior.
+            Step 5: Consider Health Information
+
+            Action: Review any medical conditions the accused may have.
+            Reasoning: Factor in whether health conditions warrant special consideration for bail.
+            Step 6: Final Decision
+
+            Reasoning: Weigh all inputs and assess the overall eligibility for bail.
+            If Eligible: Recommend bail and suggest potential conditions.
+            If Not Eligible: Provide reasons for denial based on the factors evaluated.
+        """
