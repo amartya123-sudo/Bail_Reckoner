@@ -30,59 +30,64 @@ class Prompt:
             "Assess the eligibility for bail based on the following user-provided inputs. Follow the reasoning process outlined below to determine whether bail should be granted or denied, and under what conditions.
 
             Inputs Provided:
+            - Personal Information:
+                - Age: {kwargs.get('age')}
+                - Gender: {kwargs.get('gender')}
+            
+            - Case Details:
+                - Incident Brief: {kwargs.get('incident_brief')}
+                - Offence Acts: {kwargs.get('acts')}
+                - Sections under which the offender was arrested: {kwargs.get('offence_section')}
+            
+            - Previous Bail Application History:
+                - Any previous bail application?: {kwargs.get('previous_bail_application')}
+                    - If Allowed:
+                        - Terms & Conditions: {kwargs.get('terms_conditions')}
+                    - If Not:
+                        - Grounds for Rejection: {kwargs.get('grounds_rejection')}
+                - Court where the application was decided: {kwargs.get('court_name')}
 
-            Personal Information:
-
-            Age: {kwargs.get('age')}
-            Gender: {kwargs.get('gender')}
-            Case Details:
-
-            Incident Brief: {kwargs.get('incident_brief')}
-            Offence Acts: {kwargs.get('acts')}
-            Sections under which the offender was arrested: {kwargs.get('offence_section')}
-            Previous Bail Application History:
-
-            Any previous bail application?: {kwargs.get('previous_bail_application')}
-            If Allowed:
-            Terms & Conditions: {kwargs.get('terms_conditions')}
-            If Not:
-            Grounds for Rejection: {kwargs.get('grounds_rejection')}
-            Court where the application was decided: {kwargs.get('court_name')}
-            Criminal History:
-
-            Any other previous case?: {kwargs.get('previous_case')}
-            If Yes, sections of offense: {kwargs.get('sections_offense')}
-            Health Information:
-
-            Any medical condition?: {kwargs.get('medical_condition')}
+            - Criminal History:
+                - Any other previous case?: {kwargs.get('previous_case')}
+                    - If Yes, sections of offense: {kwargs.get('sections_offense')}
+            
+            - Health Information:
+                - Any medical condition?: {kwargs.get('medical_condition')}
+            
+            - Prison History:
+                - For how much duration the accused has already been in prison?: {kwargs.get('prison_times')}
+            
             Decision-Making Process:
 
             Step 1: Evaluate Offense and Arrest Details
-
-            Action: Determine the severity of the offense based on the sections under which the offender was arrested.
-            Reasoning: Consider the nature of the offense (bailable vs. non-bailable) and its seriousness.
+            - Action: Determine the severity of the offense based on the sections under which the offender was arrested.
+            - Reasoning: Consider the nature of the offense (bailable vs. non-bailable) and its seriousness.
+            
             Step 2: Review Personal Circumstances
-
-            Action: Consider the age and gender of the accused.
-            Reasoning: Account for any special considerations that might apply (e.g., minors, pregnant women).
+            - Action: Consider the age and gender of the accused.
+            - Reasoning: Account for any special considerations that might apply (e.g., minors, pregnant women).
+            
             Step 3: Analyze Previous Bail Application
-
-            Action: Check if the accused has applied for bail before.
-            If Allowed:
-            Reasoning: Assess whether the terms and conditions were met.
-            If Not:
-            Reasoning: Understand the grounds for rejection and the court's decision.
+            - Action: Check if the accused has applied for bail before.
+                - If Allowed:
+                    - Reasoning: Assess whether the terms and conditions were met.
+                - If Not:
+                    - Reasoning: Understand the grounds for rejection and the court's decision.
+            
             Step 4: Assess Criminal History
+            - Action: Review any previous cases involving the accused.
+            - Reasoning: Evaluate the nature and sections of past offenses to determine any pattern of behavior.
+            
+            Step 5: Review Prison History
+            - Action: Assess how many times the accused has already been in prison.
+            - Reasoning: Consider the frequency of imprisonment to evaluate the likelihood of reoffending and overall behavior pattern.
+            
+            Step 6: Consider Health Information
+            - Action: Review any medical conditions the accused may have.
+            - Reasoning: Factor in whether health conditions warrant special consideration for bail.
 
-            Action: Review any previous cases involving the accused.
-            Reasoning: Evaluate the nature and sections of past offenses to determine any pattern of behavior.
-            Step 5: Consider Health Information
-
-            Action: Review any medical conditions the accused may have.
-            Reasoning: Factor in whether health conditions warrant special consideration for bail.
-            Step 6: Final Decision
-
-            Reasoning: Weigh all inputs and assess the overall eligibility for bail.
-            If Eligible: Recommend bail and suggest potential conditions.
-            If Not Eligible: Provide reasons for denial based on the factors evaluated.
+            Step 7: Final Decision
+            - Reasoning: Weigh all inputs and assess the overall eligibility for bail.
+                - If Eligible: Recommend bail and suggest potential conditions.
+                - If Not Eligible: Provide reasons for denial based on the factors evaluated."
         """

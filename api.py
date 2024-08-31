@@ -68,7 +68,7 @@ async def submit_bail_application(application: BailApplication):
         "age": application.personal_information.age,
         "gender": application.personal_information.gender,
         "acts": application.case_details.acts,
-        "offence_section": application.case_details.offence_section,
+        "offence_section": offences,
         "previous_bail_application": application.bail_application_history.previous_bail_application,
         "terms_conditions": application.bail_application_history.terms_conditions,
         "grounds_rejection": application.bail_application_history.terms_conditions,
