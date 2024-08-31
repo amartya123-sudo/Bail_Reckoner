@@ -1,3 +1,5 @@
+from database import get_desc
+
 class Prompt:
     ParseInstruction = """
         You are a legal assistant specializing in parsing and interpreting legal documents.\n
@@ -26,6 +28,12 @@ class Prompt:
         """
 
     def evalPrompt(kwargs):
+        prev = ""
+        
+        if kwargs.get('previous_case').lower().strip() == "yes":
+            prev = get_desc(kwargs.get('offence_acts'),kwargs.get('sections_offence'))
+            
+        
         return f"""
             "Assess the eligibility for bail based on the following user-provided inputs. Follow the reasoning process outlined below to determine whether bail should be granted or denied, and under what conditions.
 
@@ -49,7 +57,7 @@ class Prompt:
 
             - Criminal History:
                 - Any other previous case?: {kwargs.get('previous_case')}
-                    - If Yes, sections of offense: {kwargs.get('sections_offense')}
+                    - If Yes, sections of offense: {prev}
             
             - Health Information:
                 - Any medical condition?: {kwargs.get('medical_condition')}

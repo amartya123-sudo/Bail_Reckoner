@@ -6,6 +6,7 @@ from pymongo.server_api import ServerApi
 from google import generativeai as genai
 from time import time
 from prompt_library import Prompt
+from database import get_desc
 
 uri = "mongodb+srv://admin:Spl54Q4fcTTVfUmh@cluster0.mtfjbub.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
@@ -21,19 +22,7 @@ class Reckoner:
     
 
     def fetch(self, collection_name: str, section_number: str):
-        print(collection_name)
-        sections = [sec.strip() for sec in section_number.split(",")]
-        db = client['Indian_Acts']
-        section_desc = []
-        for col in collection_name:
-            collection = db[col]
-            
-            query = {'Section_Number': {'$in': sections}}
-            results = collection.find(query)
-
-            section_desc.append(res['Description'] for res in results)
-        
-        return section_desc
+        return get_desc(collection_name, section_number)
 
 
     def parse(self, text:str):

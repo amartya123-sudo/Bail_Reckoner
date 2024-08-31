@@ -41,7 +41,8 @@ class BailApplicationHistory(BaseModel):
 
 class CriminalHistory(BaseModel):
     previous_case: str = Field(..., alias="Any other previous case?")
-    sections_offense: Optional[List[str]] = Field(None, alias="Sections of offense")
+    offence_acts: str = Field(..., alias="Previous offence Acts")
+    sections_offence: Optional[List[str]] = Field(None, alias="Sections of previous offence")
 
 
 class HealthInformation(BaseModel):
@@ -74,7 +75,8 @@ async def submit_bail_application(application: BailApplication):
         "grounds_rejection": application.bail_application_history.terms_conditions,
         "court_name": application.bail_application_history.court_name,
         "previous_case": application.criminal_history.previous_case,
-        "sections_offense": application.criminal_history.sections_offense,
+        "offence_acts": application.criminal_history.offence_acts,
+        "sections_offence": application.criminal_history.sections_offence,
         "medical_condition": application.health_information.medical_condition,
     }
     return reckoner.evaluator(inputs)
