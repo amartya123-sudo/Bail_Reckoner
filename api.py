@@ -48,13 +48,16 @@ class CriminalHistory(BaseModel):
 class HealthInformation(BaseModel):
     medical_condition: Optional[str] = Field(None, alias="Any medical condition?")
 
-
+class PrisionHistory(BaseModel):
+    prison_duration: str = Field(..., alias="Already serverd jail duration in this case?")
+    
 class BailApplication(BaseModel):
     personal_information: PersonalInformation
     case_details: CaseDetails
     bail_application_history: Optional[BailApplicationHistory]
     criminal_history: CriminalHistory
     health_information: HealthInformation
+    prision_history: PrisionHistory
 
 
 @app.post("/submit_bail_application/")
@@ -78,5 +81,6 @@ async def submit_bail_application(application: BailApplication):
         "offence_acts": application.criminal_history.offence_acts,
         "sections_offence": application.criminal_history.sections_offence,
         "medical_condition": application.health_information.medical_condition,
+        "prison_duration": application.prision_history.prison_duration,
     }
     return reckoner.evaluator(inputs)

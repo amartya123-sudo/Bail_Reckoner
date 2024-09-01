@@ -29,11 +29,10 @@ class Prompt:
 
     def evalPrompt(kwargs):
         prev = ""
-        
-        if kwargs.get('previous_case').lower().strip() == "yes":
-            prev = get_desc(kwargs.get('offence_acts'),kwargs.get('sections_offence'))
-            
-        
+
+        if kwargs.get("previous_case").lower().strip() == "yes":
+            prev = get_desc(kwargs.get("offence_acts"), kwargs.get("sections_offence"))
+
         return f"""
             "Assess the eligibility for bail based on the following user-provided inputs. Follow the reasoning process outlined below to determine whether bail should be granted or denied, and under what conditions.
 
@@ -51,7 +50,7 @@ class Prompt:
                 - Any previous bail application?: {kwargs.get('previous_bail_application')}
                     - If Allowed:
                         - Terms & Conditions: {kwargs.get('terms_conditions')}
-                    - If Not:
+                    - If Not Allowed:
                         - Grounds for Rejection: {kwargs.get('grounds_rejection')}
                 - Court where the application was decided: {kwargs.get('court_name')}
 
@@ -63,7 +62,7 @@ class Prompt:
                 - Any medical condition?: {kwargs.get('medical_condition')}
             
             - Prison History:
-                - For how much duration the accused has already been in prison?: {kwargs.get('prison_times')}
+                - For how much duration the accused has already been in prison for this case?: {kwargs.get('prison_duration')}
             
             Decision-Making Process:
 
