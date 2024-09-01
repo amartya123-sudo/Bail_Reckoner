@@ -6,19 +6,17 @@ uri = "mongodb+srv://admin:Spl54Q4fcTTVfUmh@cluster0.mtfjbub.mongodb.net/?retryW
 client = MongoClient(uri, server_api=ServerApi('1'))
 
 def get_desc(collection_name: list, section_number: str):
-    
+    print(section_number)
+    print(type(section_number))
     sections = [sec.strip() for sec in section_number.split(",")]
     db = client['Indian_Acts']
-    section_desc = []
+    section_desc = list()
     for col in collection_name:
         collection = db[col]
         
         query = {'Section_Number': {'$in': sections}}
         results = collection.find(query)
-
-        section_desc.append(res['Description'] for res in results)
-    
+        for res in results:
+            section_desc.append(res['Description'])
     return section_desc
     
-ff = get_desc(['IPC'], "320")
-print(ff[0])

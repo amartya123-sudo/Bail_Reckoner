@@ -1,5 +1,6 @@
 from database import get_desc
 
+
 class Prompt:
     ParseInstruction = """
         You are a legal assistant specializing in parsing and interpreting legal documents.\n
@@ -28,41 +29,22 @@ class Prompt:
         """
 
     def evalPrompt(kwargs):
+        print(kwargs)
         prev = ""
 
-        if kwargs.get("previous_case").lower().strip() == "yes":
-            prev = get_desc(kwargs.get("offence_acts"), kwargs.get("sections_offence"))
+        previous_case = kwargs.get("previous_case", "").lower().strip()
+        prev_offence_acts = kwargs.get("prev_offence_acts", "")
+        prev_sections_offence = kwargs.get("prev_sections_offence", "")
+
+        if previous_case == "yes":
+            prev = get_desc(prev_offence_acts, prev_sections_offence)
 
         return f"""
-            "Assess the eligibility for bail based on the following user-provided inputs. Follow the reasoning process outlined below to determine whether bail should be granted or denied, and under what conditions.
+        Assess the eligibility for bail based on the following user-provided inputs. Follow the reasoning process outlined below to determine whether bail should be granted or denied, and under what conditions.
 
-            Inputs Provided:
-            - Personal Information:
-                - Age: {kwargs.get('age')}
-                - Gender: {kwargs.get('gender')}
-            
-            - Case Details:
-                - Incident Brief: {kwargs.get('incident_brief')}
-                - Offence Acts: {kwargs.get('acts')}
-                - Sections under which the offender was arrested: {kwargs.get('offence_section')}
-            
-            - Previous Bail Application History:
-                - Any previous bail application?: {kwargs.get('previous_bail_application')}
-                    - If Allowed:
-                        - Terms & Conditions: {kwargs.get('terms_conditions')}
-                    - If Not Allowed:
-                        - Grounds for Rejection: {kwargs.get('grounds_rejection')}
-                - Court where the application was decided: {kwargs.get('court_name')}
-
-            - Criminal History:
-                - Any other previous case?: {kwargs.get('previous_case')}
-                    - If Yes, sections of offense: {prev}
-            
-            - Health Information:
-                - Any medical condition?: {kwargs.get('medical_condition')}
-            
-            - Prison History:
-                - For how much duration the accused has already been in prison for this case?: {kwargs.get('prison_duration')}
+        Inputs Provided:
+        
+            {kwargs}
             
             Decision-Making Process:
 

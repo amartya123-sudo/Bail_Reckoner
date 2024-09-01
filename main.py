@@ -13,6 +13,25 @@ genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 client = MongoClient(uri, server_api=ServerApi('1'))
 
+acts = {
+    "THE BHARATIYA NYAYA SANHITA, 2023": "BNS",
+    "THE BHARATIYA NAGARIK SURAKSHA SANHITA, 2023":"BNSS",
+    "THE CODE OF CRIMINAL PROCEDURE, 1973":"CrPC",
+    "THE PROTECTION OF WOMEN FROM DOMESTIC VIOLENCE ACT, 2005":"DVA",
+    "THE INDIAN PENAL CODE":"IPC",
+    "THE INDECENT REPRESENTATION OF WOMEN (PROHIBITION) ACT, 1986":"IRWA",
+    "THE IMMORAL TRAFFIC (PREVENTION) ACT, 1956":"ITA",
+    "THE INFORMATION TECHNOLOGY ACT, 2000":"ITAct",
+    "THE JUVENILE JUSTICE (CARE AND PROTECTION OF CHILDREN) ACT, 2015":"JJA",
+    "THE NATIONAL INVESTIGATION AGENCY ACT, 2008":"NIA",
+    "THE NATIONAL SECURITY ACT, 1980":"NSA",
+    "THE PREVENTION OF CORRUPTION ACT, 1988":"PCA",
+    "THE PREVENTION OF MONEY-LAUNDERING ACT, 2002":"PMLA",
+    "THE PROTECTION OF CHILDREN FROM SEXUAL OFFENCES ACT, 2012":"POSCO",
+    "THE SCHEDULED CASTES AND THE SCHEDULED TRIBES (PREVENTION OF ATROCITIES) ACT, 1989":"SCSTAct",
+    "THE UNLAWFUL ACTIVITIES (PREVENTION) ACT, 1967":"UAPA"
+}
+
 class Reckoner:
     def __init__(self) -> None:
         pass
@@ -21,7 +40,9 @@ class Reckoner:
         return genai.GenerativeModel('gemini-1.5-flash', system_instruction=instruction)
     
 
-    def fetch(self, collection_name: str, section_number: str):
+    def fetch(self, collection_name: list, section_number: str):
+        collection_name = [acts[col] for col in collection_name]
+        print(collection_name)
         return get_desc(collection_name, section_number)
 
 
@@ -33,7 +54,9 @@ class Reckoner:
     
     def llm_parser(self, data:dict):
         results = {}
+        # collection_name = [acts[col] for col in collection_name]
         for collection_name, sections in data.items():
+            print(collection_name, "llmparser")
             collection = client['Indian_Acts'][collection_name]
             if sections: 
                 query = {'Section_Number': {'$in': sections}}
@@ -42,7 +65,7 @@ class Reckoner:
         
         return response
     
-    def evaluator(self, input: dict):
+    def evaluator(self, input):
         model = self.llm(instruction=Prompt.evaluator)
         return model.generate_content(Prompt.evalPrompt(input)).text
 

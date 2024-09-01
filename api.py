@@ -1,11 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from fastapi.middleware.cors import CORSMiddleware
 from main import Reckoner
 
 app = FastAPI()
-
 
 
 app.add_middleware(
@@ -17,70 +16,27 @@ app.add_middleware(
 )
 
 
-class PersonalInformation(BaseModel):
-    age: int
-    gender: str
-
-
-class CaseDetails(BaseModel):
-    incident_brief: str = Field(..., alias="Incident Brief")
-    acts: List[str] = Field(..., alias="Offense Acts")
-    offence_section: str = Field(
-        ..., alias="Sections under which the offender was arrested"
-    )
-
-
-class BailApplicationHistory(BaseModel):
-    previous_bail_application: str = Field(..., alias="Any previous bail application?")
-    terms_conditions: Optional[str] = Field(None, alias="Terms & Conditions")
-    grounds_rejection: Optional[str] = Field(None, alias="Grounds for Rejection")
-    court_name: Optional[str] = Field(
-        None, alias="Court where the application was decided"
-    )
-
-
-class CriminalHistory(BaseModel):
-    previous_case: str = Field(..., alias="Any other previous case?")
-    offence_acts: str = Field(..., alias="Previous offence Acts")
-    sections_offence: Optional[List[str]] = Field(None, alias="Sections of previous offence")
-
-
-class HealthInformation(BaseModel):
-    medical_condition: Optional[str] = Field(None, alias="Any medical condition?")
-
-class PrisionHistory(BaseModel):
-    prison_duration: str = Field(..., alias="Already serverd jail duration in this case?")
-    
-class BailApplication(BaseModel):
-    personal_information: PersonalInformation
-    case_details: CaseDetails
-    bail_application_history: Optional[BailApplicationHistory]
-    criminal_history: CriminalHistory
-    health_information: HealthInformation
-    prision_history: PrisionHistory
-
 
 @app.post("/submit_bail_application/")
-async def submit_bail_application(application: BailApplication):
+async def submit_bail_application(request: Request):
+    
+    application = await request.json()
     reckoner = Reckoner()
-    selected_act = application.case_details.acts
-    sections_input = application.case_details.offence_section
+    
+    print(application)
+    
+    selected_act = application.get('case_details', {}).get('Acts of Offence', [])
+    sections_input = application.get('case_details', {}).get('sections_of_offence', [])
+    print(type(selected_act))
+    print(type(sections_input))
+
+    # Fetch, parse, and process the data
     acts = reckoner.fetch(selected_act, sections_input)
     parsed = reckoner.parse(acts)
     offences = reckoner.llm_parser(parsed)
-    inputs = {
-        "age": application.personal_information.age,
-        "gender": application.personal_information.gender,
-        "acts": application.case_details.acts,
-        "offence_section": offences,
-        "previous_bail_application": application.bail_application_history.previous_bail_application,
-        "terms_conditions": application.bail_application_history.terms_conditions,
-        "grounds_rejection": application.bail_application_history.terms_conditions,
-        "court_name": application.bail_application_history.court_name,
-        "previous_case": application.criminal_history.previous_case,
-        "offence_acts": application.criminal_history.offence_acts,
-        "sections_offence": application.criminal_history.sections_offence,
-        "medical_condition": application.health_information.medical_condition,
-        "prison_duration": application.prision_history.prison_duration,
-    }
-    return reckoner.evaluator(inputs)
+    application['offences'] = offences
+    # Evaluate the final result
+    print(application)
+    result = reckoner.evaluator(application)
+    print(result)
+    return result
