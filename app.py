@@ -1,7 +1,8 @@
 import streamlit as st
 from main import Reckoner
 
-st.set_page_config(page_title="Bail Reckoner", layout="wide",page_icon="Law_compliant.png")
+reckoner = Reckoner()
+
 st.title("⚖️ Bail Reckoner")
 
 acts = {
@@ -24,49 +25,68 @@ acts = {
     "THE UNLAWFUL ACTIVITIES (PREVENTION) ACT, 1967":"UAPA"
 }
 
-selected = st.selectbox("Select an Act", list(acts.keys()))
-selected_act = str(acts[selected])
-
-
-sections_input = st.text_input("Enter Sections (comma-separated)", placeholder="Enter Section of Offence")
+formData = {}
 
 age = st.text_input("Age")
-gender = st.radio("Gender", ["Male", "Female", "Other"])
-convictions = st.text_input("Previous Convictions")
-repeat_offender = st.radio("Repeat Offender", ["Yes", "No"])
-public_offences = st.text_area("Nature of the Offense (Public Safety)")
-violent_behaviour = st.radio("Violent Behavior", ["Yes", "No"])
-gang = st.text_input("Gang Affiliations")
-previous_order = st.text_input("Previous Compliance with Court Orders")
-court_attendence = st.text_input("History of Court Attendance")
-health_condition = st.radio("Health Conditions", ["Yes", "No"])
-dependent_members = st.text_input("Dependent Family Members")
-if gender=="Female":
-    pregnant = st.radio("Pregnant (if applicable)", ["Not applicable", "Yes", "No"])
-else:
-    pregnant = "No"
-reckoner = Reckoner()
-acts = reckoner.fetch(selected_act,sections_input)
-parsed = reckoner.parse(acts)
-offences = reckoner.llm_parser(parsed)
+gender = st.radio("Gender", options=["Male", "Female"])
 
-if st.button("Generate Recommendation"):
-    inputs = {
-        "age": age,
+if age and gender:
+    formData['personal_information'] = {
+        "age": int(age),
         "gender": gender,
-        "offences": offences,
-        "convictions": convictions,
-        "repeat_offender": repeat_offender,
-        "public_offences": public_offences,
-        "violent_behaviour": violent_behaviour,
-        "gang": gang,
-        "previous_order": previous_order,
-        "court_attendence": court_attendence,
-        "health_condition": health_condition,
-        "dependent_members": dependent_members,
-        "pregnant": pregnant,
     }
-    with st.spinner("Processing"):
-        result = reckoner.evaluator(inputs)
-        st.markdown(result)
 
+incidentBrief = st.text_area("Incident Brief")
+sectionsOffense = st.multiselect("Acts of Offence", acts.keys())
+sections = st.text_input("Enter Sections (comma-separated)", placeholder="Enter Section of Offence")
+
+if incidentBrief and sectionsOffense:
+    formData['case_details'] = {
+        "Acts of Offence": sectionsOffense,
+        "sections_of_offence": sections,
+        "Incident Brief": incidentBrief,
+    }
+previousBail = st.radio("Any previous bail application?", options=["Yes", "No"])
+if previousBail == 'Yes':
+    bailOutcome = st.radio("Outcome", options=["Allowed", "Not Allowed"])
+    allowedTerms = st.text_area("Terms & Conditions") if bailOutcome == 'Allowed' else None
+    groundsRejection = st.text_area("Grounds for Rejection") if bailOutcome == 'Not Allowed' else None
+    courtName = st.text_input("Court where the application was decided")
+
+    formData['bail_application_history'] = {
+        "Any previous bail application?": previousBail,
+        "Outcome": bailOutcome,
+        **({"Terms & Conditions": allowedTerms} if allowedTerms else {}),
+        **({"Grounds for Rejection": groundsRejection} if groundsRejection else {}),
+        "Court where the application was decided": courtName or None,
+    }
+
+otherCase = st.radio("Any other previous case?", options=["Yes", "No"])
+if otherCase == 'Yes':
+    prevsectionsOffense = st.multiselect("Previous Acts of Offence", list(acts.keys()))
+    prevsections = st.text_input("Previous Section of Offence", placeholder="Enter Section of Offence")
+
+    formData['criminal_history'] = {
+        "Any other previous case?": otherCase,
+        "Prev Acts of Offence": prevsectionsOffense,
+        "Prev Section of Offence": prevsections,
+    }
+
+medicalCondition = st.text_area("Any medical condition?")
+if medicalCondition:
+    formData['health_information'] = {
+        "Any medical condition?": medicalCondition,
+    }
+
+submit = st.button("Check Recommendation") 
+
+if submit:
+    with st.spinner("Processing..."):
+        act = formData.get('case_details', {}).get('Acts of Offence', [])
+        section = formData.get('case_details', {}).get('sections_of_offence', [])
+        acts = reckoner.fetch(act, section)
+        parsed = reckoner.parse(acts)
+        offences = reckoner.llm_parser(parsed)
+        formData["criminal_history"] = offences
+        result = reckoner.evaluator(formData)
+        st.write(result)
